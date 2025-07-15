@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # === CONFIGURATION ===
-skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S001C002P007R002A008.skeleton.csv"
+skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S017C002P020R002A022.skeleton.csv"
 
 # Final clean joint connections
 connections = [
@@ -23,7 +23,6 @@ connections = [
 
     # Right leg
     (16, 17), (17, 18),
-    (4,11)
 ]
 
 # Define coloring

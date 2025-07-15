@@ -21,7 +21,7 @@ def read_skeleton_csv(path):
     return frames
 
 #config
-skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL\ActionM\S019C002P041R002A105.csv"
+skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S017C002P020R001A016.skeleton.csv"
 output_gif_path = "test.gif"
 frame_limit = 300  # number of frames to animate
 
