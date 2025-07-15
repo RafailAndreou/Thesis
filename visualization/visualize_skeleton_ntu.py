@@ -8,12 +8,14 @@ import matplotlib.animation as animation
 skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S017C002P020R002A022.skeleton.csv"
 
 # Final clean joint connections
+
+# Final clean joint connections
 connections = [
     # Spine
     (0, 1), (1, 20), (20, 2), (2, 3),
 
     # Left arm
-    (20, 5), (5, 6), (6, 7),
+    (5, 6), (6, 7),(20,4),(4,5),
 
     # Right arm
     (20, 8), (8, 9), (9, 10),
