@@ -1,0 +1,57 @@
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+# Define joint connections
+connections = [
+    (0, 1), (1, 20), (20, 2), (2, 3), (20, 8), (8, 9), (9, 10),
+    (20, 4), (4, 5), (5, 6), (20, 12), (12, 13), (13, 14),
+    (0, 16), (16, 17), (0, 18), (18, 19)
+]
+
+# Load skeleton frames from CSV
+def read_skeleton_csv(path):
+    frames = []
+    with open(path, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            joints = np.array(row[:75], dtype=np.float32).reshape(-1, 3)
+            frames.append(joints)
+    return frames
+
+# === CONFIG ===
+skeleton_csv_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S001C002P005R002A022.skeleton.csv"
+frames = read_skeleton_csv(skeleton_csv_path)
+
+# Optional: limit max number of frames
+frames = frames[:500]  # adjust as needed
+
+# Setup figure
+fig, ax = plt.subplots(figsize=(4, 4))
+ax.set_xlim(-2, 2)
+ax.set_ylim(-2, 2)
+ax.axis('off')
+ax.set_aspect('equal')
+
+# Prepare lines for animation
+lines = []
+for _ in connections:
+    line, = ax.plot([], [], 'ro-', lw=2)
+    lines.append(line)
+
+# Animation update function
+def update(frame_idx):
+    joints = frames[frame_idx]
+    x = joints[:, 0]
+    y = joints[:, 1]  # No Y flip
+    for i, (start, end) in enumerate(connections):
+        lines[i].set_data([x[start], x[end]], [y[start], y[end]])
+    return lines
+
+# Create the animation
+ani = animation.FuncAnimation(
+    fig, update, frames=len(frames), interval=20, blit=True, repeat=True
+)
+
+plt.show()
