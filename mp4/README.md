@@ -105,32 +105,10 @@ This tool is ideal for:
 
 ---
 
-## ✨ Integration in Thesis
-
-You can connect the output `.skeleton.csv` files from this tool to your existing FFT image generation and training pipeline found in:
-
-```
-image_transformation_code/FFT/
-```
-
----
-
-## 🧪 Next Steps
-
-- Transform CSVs into images using FFT: `fft_image.py`
-- Use TVT split: `fft_crossview_TVT_directories.py` or `fft_crossubject_TVT_directories.py`
-- Train with CNN: `train/fourie_images/`
-
----
-
 ## Showcase
 
 ![Walking-gif|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback.side_by_side.gif)
 
 ## 📝 License
 
-This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
----
-
-
-
+## This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
