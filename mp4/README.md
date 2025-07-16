@@ -106,8 +106,8 @@ This tool is ideal for:
 ---
 
 ## Showcase
+![Baseball|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback1.side_by_side.gif)
 
-![Walking-gif|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback.side_by_side.gif)
 
 ## 📝 License
 
