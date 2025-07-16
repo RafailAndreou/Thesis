@@ -128,5 +128,5 @@ image_transformation_code/FFT/
 This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
 #
 
-![Walking-gif](![Walking-gif](https://raw.githubusercontent.com/RafailAndreou/Thesis/main/mp4/assets/videoplayback.side_by_side.gif)
-)
+![Walking-gif](https://raw.githubusercontent.com/RafailAndreou/Thesis/main/mp4/assets/videoplayback.side_by_side.gif)
+
