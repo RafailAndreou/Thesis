@@ -7,6 +7,8 @@ import matplotlib.animation as animation
 from pathlib import Path
 
 # === MediaPipe pose connections ===
+
+savepath = "C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\test.gif"
 connections = [
     (0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8),
     (0, 9), (9, 10), (10, 11), (11, 12),
@@ -92,7 +94,11 @@ def visualize_skeleton(skeleton_frames, frame_indices=None, video_frames=None):
     )
 
     plt.tight_layout()
-    plt.show()
+    if save_path:
+        ani.save(save_path, writer='pillow', fps=30)
+        print(f"✅ Animation saved to {save_path}")
+    else:
+        plt.show()
 
 # === Standalone usage ===
 if __name__ == "__main__":
