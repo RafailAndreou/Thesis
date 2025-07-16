@@ -122,7 +122,6 @@ image_transformation_code/FFT/
 - Train with CNN: `train/fourie_images/`
 
 ---
-![Walking-gif](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback.side_by_side.gif)
 
 ## 📝 License
 
