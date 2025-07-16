@@ -105,6 +105,17 @@ This tool is ideal for:
 
 ---
 
+## Configuration Options
+
+### video_to_csv.py
+
+- You can change model_complexity to 0 for less complicated models or live usage for faster exctraction
+- Change model_complexity to 2 for more complicated models
+
+### Full_pipeline.py
+
+If you instead of saving the visualization as a gif you want to see it directly without saving change saveasgif=False
+
 ## Showcase
 
 ![Baseball|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback1.side_by_side.gif)

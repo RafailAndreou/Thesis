@@ -5,7 +5,7 @@ import cv2
 from tkinter import Tk, filedialog
 from pathlib import Path
 
-saveasgif = False  # Set to True if you want to save the output as a GIF
+saveasgif = True  # Set to True if you want to save the output as a GIF
 
 def extract_video_frames(video_path):
     cap = cv2.VideoCapture(video_path)
