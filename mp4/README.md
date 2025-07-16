@@ -122,4 +122,8 @@ If you instead of saving the visualization as a gif you want to see it directly 
 
 ## 📝 License
 
-This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.- [MediaPipe](https://github.com/google/mediapipe) – Apache License 2.0
+The following code uses the following open-source libraries:
+
+- [MediaPipe](https://github.com/google/mediapipe) – Apache License 2.0
+- [NumPy](https://numpy.org) – BSD 3-Clause License
+- [Matplotlib](https://matplotlib.org) – BSD-compatible License
