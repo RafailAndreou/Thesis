@@ -130,3 +130,4 @@ This code is built on top of [MediaPipe](https://github.com/google/mediapipe) an
 
 ![Walking-gif](https://raw.githubusercontent.com/RafailAndreou/Thesis/main/mp4/assets/videoplayback.side_by_side.gif)
 
+
