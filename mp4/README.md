@@ -106,9 +106,9 @@ This tool is ideal for:
 ---
 
 ## Showcase
-![Baseball|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback1.side_by_side.gif)
 
+![Baseball|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback1.side_by_side.gif)
 
 ## 📝 License
 
-## This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
+This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
