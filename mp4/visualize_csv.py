@@ -45,7 +45,7 @@ def load_skeleton_from_csv(csv_path):
 
 # === Visualize side-by-side or just skeleton ===
 def visualize_skeleton(skeleton_frames, frame_indices=None, video_frames=None, save_path=None):
-    fig, axes = plt.subplots(1, 2 if video_frames else 1, figsize=(12, 6))
+    fig, axes = plt.subplots(1, 2 if video_frames else 1, figsize=(6, 3))
     if not video_frames:
         axes = [axes]
 
