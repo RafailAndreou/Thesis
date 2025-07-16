@@ -126,3 +126,5 @@ image_transformation_code/FFT/
 ## 📝 License
 
 This code is built on top of [MediaPipe](https://github.com/google/mediapipe) and is intended for academic and educational use.
+
+![Walking-gif](πτυχιακή\code_rafail\Thesis\mp4\assets\videoplayback.side_by_side.gif)
