@@ -8,7 +8,7 @@ from pathlib import Path
 
 # === MediaPipe pose connections ===
 
-savepath = "C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\test.gif"
+save_path = "C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\test.gif"
 connections = [
     (0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8),
     (0, 9), (9, 10), (10, 11), (11, 12),
