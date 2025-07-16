@@ -1,11 +1,12 @@
 # visualize_csv.py
+
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from pathlib import Path
 
-# Define MediaPipe-like skeleton structure
+# === MediaPipe pose connections ===
 connections = [
     (0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8),
     (0, 9), (9, 10), (10, 11), (11, 12),
@@ -28,19 +29,24 @@ def get_color(start, end):
     else:
         return 'black'
 
+# === Load skeleton + frame index from CSV ===
 def load_skeleton_from_csv(csv_path):
     skeleton_frames = []
+    frame_indices = []
     with open(csv_path, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
-            frame = np.array(row, dtype=float).reshape(-1, 3)
-            skeleton_frames.append(frame)
-    return skeleton_frames
+            frame_idx = int(row[0])
+            joints = np.array(row[1:], dtype=float).reshape(-1, 3)
+            skeleton_frames.append(joints)
+            frame_indices.append(frame_idx)
+    return skeleton_frames, frame_indices
 
-def visualize_skeleton(skeleton_frames, video_frames=None):
+# === Visualize side-by-side or just skeleton ===
+def visualize_skeleton(skeleton_frames, frame_indices=None, video_frames=None):
     fig, axes = plt.subplots(1, 2 if video_frames else 1, figsize=(12, 6))
     if not video_frames:
-        axes = [axes]  # make iterable
+        axes = [axes]
 
     ax2 = axes[-1]
     ax2.axis('off')
@@ -63,11 +69,14 @@ def visualize_skeleton(skeleton_frames, video_frames=None):
 
     def update(i):
         joints = skeleton_frames[i]
+
+        if vid_image and frame_indices:
+            video_idx = frame_indices[i]
+            if video_idx < len(video_frames):
+                vid_image.set_array(video_frames[video_idx])
+
         x = joints[:, 0] - np.mean(joints[:, 0])
         y = -joints[:, 1] + np.mean(joints[:, 1])
-
-        if vid_image:
-            vid_image.set_array(video_frames[i])
 
         for j, (start, end) in enumerate(connections):
             lines[j].set_data([x[start], x[end]], [y[start], y[end]])
@@ -77,7 +86,7 @@ def visualize_skeleton(skeleton_frames, video_frames=None):
     ani = animation.FuncAnimation(
         fig, update,
         frames=len(skeleton_frames),
-        interval=33,
+        interval=12,
         blit=True,
         repeat=True
     )
@@ -85,7 +94,7 @@ def visualize_skeleton(skeleton_frames, video_frames=None):
     plt.tight_layout()
     plt.show()
 
-# Run standalone
+# === Standalone usage ===
 if __name__ == "__main__":
     from tkinter import Tk, filedialog
     Tk().withdraw()
@@ -93,6 +102,9 @@ if __name__ == "__main__":
         title="Select a skeleton CSV file",
         filetypes=[("CSV files", "*.csv")]
     )
+
     if csv_path:
-        skeleton_frames = load_skeleton_from_csv(csv_path)
-        visualize_skeleton(skeleton_frames)
+        skeleton_frames, frame_indices = load_skeleton_from_csv(csv_path)
+        visualize_skeleton(skeleton_frames, frame_indices)
+    else:
+        print("❌ No file selected.")

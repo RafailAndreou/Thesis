@@ -1,4 +1,4 @@
-# video_to_csv.py
+# video_to_csv.py (updated)
 import cv2
 import csv
 import numpy as np
@@ -14,7 +14,9 @@ def extract_skeleton_from_video(video_path):
 
     cap = cv2.VideoCapture(str(video_path))
     skeleton_frames = []
+    frame_indices = []
 
+    frame_idx = 0
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -25,10 +27,13 @@ def extract_skeleton_from_video(video_path):
 
         if results.pose_landmarks:
             joints = results.pose_landmarks.landmark
-            frame_data = []
-            for joint in joints:  # 33 joints
+            frame_data = [frame_idx]  # prepend frame index
+            for joint in joints:
                 frame_data.extend([joint.x, joint.y, joint.z])
-            skeleton_frames.append(np.array(frame_data).reshape(-1, 3))
+            skeleton_frames.append(frame_data)
+            frame_indices.append(frame_idx)
+
+        frame_idx += 1
 
     cap.release()
     pose.close()
@@ -36,19 +41,7 @@ def extract_skeleton_from_video(video_path):
     with open(output_csv_path, 'w', newline='') as f:
         writer = csv.writer(f)
         for frame in skeleton_frames:
-            writer.writerow(frame.flatten())
+            writer.writerow(frame)
 
     print(f"✅ Skeleton saved to: {output_csv_path}")
     return output_csv_path
-
-if __name__ == "__main__":
-    from tkinter import Tk, filedialog
-    Tk().withdraw()
-    video_path = filedialog.askopenfilename(
-        title="Select a video file",
-        filetypes=[("Video files", "*.mp4 *.avi *.mov *.gif")]
-    )
-    if video_path:
-        extract_skeleton_from_video(video_path)
-    else:
-        print("❌ No file selected.")
