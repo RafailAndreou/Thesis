@@ -77,7 +77,7 @@ labels = [ax.text(0, 0, str(i), fontsize=8, color='gray') for i in range(25)]
 def update(frame_idx):
     joints = frames[frame_idx]
     x = joints[:, 0]
-    y = -joints[:, 1]
+    y = joints[:, 1]
 
     for i, (start, end) in enumerate(connections):
         lines[i].set_data([x[start], x[end]], [y[start], y[end]])
