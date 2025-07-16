@@ -8,7 +8,6 @@ from pathlib import Path
 
 # === MediaPipe pose connections ===
 
-save_path = "C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\test.gif"
 connections = [
     (0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8),
     (0, 9), (9, 10), (10, 11), (11, 12),
@@ -45,7 +44,7 @@ def load_skeleton_from_csv(csv_path):
     return skeleton_frames, frame_indices
 
 # === Visualize side-by-side or just skeleton ===
-def visualize_skeleton(skeleton_frames, frame_indices=None, video_frames=None):
+def visualize_skeleton(skeleton_frames, frame_indices=None, video_frames=None, save_path=None):
     fig, axes = plt.subplots(1, 2 if video_frames else 1, figsize=(12, 6))
     if not video_frames:
         axes = [axes]
