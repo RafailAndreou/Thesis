@@ -119,6 +119,7 @@ If you instead of saving the visualization as a gif you want to see it directly 
 ## Showcase
 
 ![Baseball|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback1.side_by_side.gif)
+![Walking|300x300](https://github.com/RafailAndreou/Thesis/blob/main/mp4/assets/videoplayback.side_by_side.gif)
 
 ## 📝 License
 
