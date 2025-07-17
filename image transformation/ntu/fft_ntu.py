@@ -1,59 +1,93 @@
+import os,sys,io,shutil,csv
 import numpy as np
-import pandas as pd
-import os
+import matplotlib
 import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
+from scipy import interpolate
 
-# === CONFIG ===
-input_path = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\R\S001C003P001R001A001.skeleton.csv"  # change this
-output_dir = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\Rafail_dataset\ntu\fft_image"
-basename = os.path.splitext(os.path.basename(input_path))[0]
-output_path = os.path.join(output_dir, f"{basename}.png")
-interpolated_frame_count = 159
+# Parameters
+num = 159
+fs = 12.0
+lowcut = 1
+highcut = 4.5
 
-# === LOAD AND CLEAN ===
-df = pd.read_csv(input_path)
+# Output directory
+output_dir = r'C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\Rafail_dataset\ntu\fft_image'
 
-# Drop frame index if present
-if df.columns[0].lower().startswith("frame") or df.columns[0] == "0":
-    df = df.iloc[:, 1:]
+# Create output directory if it doesn't exist
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
-# Drop all-zero columns (unused joints)
-df = df.loc[:, (df != 0).any(axis=0)]
+# Function to read CSV file
+def readcsv(filename):
+    ifile = open(filename, 'rU')
+    reader = csv.reader(ifile, delimiter=',')
+    rownum = 0
+    a = []
+    for row in reader:
+        a.append(row)
+        rownum += 1
+    ifile.close()
+    return a
 
-data = df.to_numpy()
-num_frames, num_columns = data.shape
+# Process single CSV file
+def process_csv(csv_filename):
+    print('Processing:', csv_filename)
+    
+    # Read the CSV file
+    picture = readcsv(csv_filename)
+    
+    # Get signal shape
+    signal_shape = len(picture)
+    shape1 = (signal_shape, 75)
+    signal_img = np.ndarray(shape1)
+    signal_img = np.zeros(shape1)
+    
+    # Fill signal_img with data
+    for j in range(0, signal_shape):
+        signal_img[j] = picture[j][0:75]
+    
+    # Transpose
+    c = signal_img.T
+    
+    # Determine difference for interpolation
+    if signal_shape >= num:
+        dif = num
+    else:
+        dif = num - signal_shape
+    
+    shape = (75, dif)
+    d = np.zeros(shape)
+    z = []
+    b = []
+    
+    # Interpolation
+    for k in range(0, 75):
+        arr2 = np.array(c[k])
+        arr2_interp = interpolate.interp1d(np.arange(arr2.size), arr2)
+        arr2_stretch = arr2_interp(np.linspace(0, arr2.size-1, num))
+        b = np.concatenate((b, arr2_stretch), axis=0)
+    
+    z = np.reshape(b, (75, num))
+    znew = z.T
+    
+    # FFT processing
+    fft_array = np.fft.fft2(znew)
+    fft_shift = np.fft.fftshift(fft_array)
+    
+    # Calculate magnitude spectrum
+    magnitude_spectrum_fft = 20 * np.log(np.abs(fft_shift))
+    
+    # Save FFT image
+    magnitude = magnitude_spectrum_fft * 255
+    
+    # Extract filename without extension
+    base_filename = os.path.splitext(os.path.basename(csv_filename))[0]
+    output_filename = os.path.join(output_dir, base_filename + '.png')
+    
+    matplotlib.pyplot.imsave(output_filename, magnitude)
+    print(f'Saved FFT image: {output_filename}')
 
-# Ensure shape is divisible by 3
-if num_columns % 3 != 0:
-    raise ValueError(f"Expected joint data in x,y,z triplets. Got {num_columns} columns.")
+# Process your specific CSV file
+csv_file_path = r'C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\action_recognition_code+dataset\action_recognition_code+dataset\datasets\ntu\NTU_MEDICAL_+_FULL_DATASET\M\S001C002P001R001A041.skeleton.csv'
 
-num_joints = num_columns // 3
-
-# Reshape to [frames, joints, 3]
-data = data.reshape((num_frames, num_joints, 3))
-
-# === INTERPOLATE ===
-interp_data = np.zeros((interpolated_frame_count, num_joints, 3))
-for j in range(num_joints):
-    for d in range(3):
-        series = data[:, j, d]
-        interp_fn = interp1d(np.arange(num_frames), series, kind='linear', fill_value='extrapolate')
-        interp_data[:, j, d] = interp_fn(np.linspace(0, num_frames - 1, interpolated_frame_count))
-
-# === FLATTEN to 2D: shape (frames x coords) = [159 x (joints * 3)] ===
-flat_data = interp_data.reshape(interpolated_frame_count, num_joints * 3)
-
-# === 2D FFT ===
-fft_2d = np.fft.fft2(flat_data)
-fft_shifted = np.fft.fftshift(fft_2d)
-magnitude = np.abs(fft_shifted)
-
-# === LOG SCALE + Normalize to 0–255 ===
-magnitude_log = 20 * np.log1p(magnitude)  # log1p avoids log(0)
-magnitude_norm = (magnitude_log - magnitude_log.min()) / (magnitude_log.max() - magnitude_log.min() + 1e-8)
-fft_img = (magnitude_norm * 255).astype(np.uint8)
-
-# === SAVE IMAGE ===
-plt.imsave(output_path, fft_img, cmap='gray')
-print(f"✅ Saved FFT image to: {output_path}")
+process_csv(csv_file_path)
