@@ -4,62 +4,81 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dropout, Dense
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.optimizers import Adam
 
-# === Paths ===
-base_path = r'C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\Rafail_dataset\ntu\split_dataset'
-train_dir = os.path.join(base_path, 'train')
-val_dir = os.path.join(base_path, 'val')
-test_dir = os.path.join(base_path, 'test')
-model_output = os.path.join(base_path, 'resnet50_fft_model.h5')
+# ==== CONFIG ====
+dataset_root = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\Rafail_dataset\ntu\split_dataset"
+image_size = (224, 224)
+batch_size = 16
+num_classes = 60
+epochs = 20
+learning_rate = 1e-5
+output_model_path = "resnet50_fft_unfrozen_from_start.h5"
 
-# === Parameters ===
-IMG_SIZE = (159,75)  # or use your actual FFT image size
-BATCH_SIZE = 4
-NUM_CLASSES = 60
-EPOCHS = 30
-
-# === Data Loaders ===
-datagen = ImageDataGenerator(rescale=1./255)
-
-train_gen = datagen.flow_from_directory(
-    train_dir, target_size=IMG_SIZE, batch_size=BATCH_SIZE, class_mode='categorical')
-
-val_gen = datagen.flow_from_directory(
-    val_dir, target_size=IMG_SIZE, batch_size=BATCH_SIZE, class_mode='categorical')
-
-test_gen = datagen.flow_from_directory(
-    test_dir, target_size=IMG_SIZE, batch_size=BATCH_SIZE, class_mode='categorical', shuffle=False)
-
-# === Transfer Learning Model ===
-base_model = ResNet50(include_top=False, weights='imagenet', input_shape=IMG_SIZE + (3,))
-x = base_model.output
-x = GlobalAveragePooling2D()(x)
-x = Dropout(0.4)(x)
-predictions = Dense(NUM_CLASSES, activation='softmax')(x)
-model = Model(inputs=base_model.input, outputs=predictions)
-
-# Freeze base model
-for layer in base_model.layers:
-    layer.trainable = False
-
-# Compile
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# === Callbacks ===
-checkpoint = ModelCheckpoint(model_output, monitor='val_accuracy', save_best_only=True)
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=3, verbose=1)
-early_stop = EarlyStopping(monitor='val_loss', patience=6, restore_best_weights=True)
-
-# === Train ===
-model.fit(
-    train_gen,
-    epochs=EPOCHS,
-    validation_data=val_gen,
-    callbacks=[checkpoint, reduce_lr, early_stop]
+# ==== DATA GENERATORS ====
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    horizontal_flip=True,
+    rotation_range=10,
+    width_shift_range=0.1,
+    height_shift_range=0.1
 )
 
-# === Evaluate ===
-loss, acc = model.evaluate(test_gen)
-print(f'✅ Test Accuracy: {acc:.4f}')
- 
+val_test_datagen = ImageDataGenerator(rescale=1./255)
+
+train_generator = train_datagen.flow_from_directory(
+    os.path.join(dataset_root, "train"),
+    target_size=image_size,
+    batch_size=batch_size,
+    class_mode='categorical'
+)
+
+val_generator = val_test_datagen.flow_from_directory(
+    os.path.join(dataset_root, "val"),
+    target_size=image_size,
+    batch_size=batch_size,
+    class_mode='categorical'
+)
+
+test_generator = val_test_datagen.flow_from_directory(
+    os.path.join(dataset_root, "test"),
+    target_size=image_size,
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=False
+)
+
+# ==== MODEL SETUP ====
+base_model = ResNet50(
+    weights='imagenet',
+    include_top=False,
+    input_shape=(image_size[0], image_size[1], 3)
+)
+base_model.trainable = True  # ✅ Unfreeze from the start
+
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dropout(0.3)(x)
+output = Dense(num_classes, activation='softmax')(x)
+
+model = Model(inputs=base_model.input, outputs=output)
+
+model.compile(optimizer=Adam(learning_rate),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# ==== TRAIN FULL MODEL ====
+print("\n🚀 Training full model from the start (ResNet + classifier)...")
+model.fit(
+    train_generator,
+    validation_data=val_generator,
+    epochs=epochs
+)
+
+# ==== EVALUATE ====
+loss, acc = model.evaluate(test_generator)
+print(f"\n✅ Final Test Accuracy: {acc*100:.2f}%")
+
+# ==== SAVE MODEL ====
+model.save(output_model_path)
+print(f"\n💾 Model saved to: {output_model_path}")
