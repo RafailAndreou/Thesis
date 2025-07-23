@@ -13,7 +13,7 @@ batch_size = 16
 num_classes = 60
 epochs = 20
 learning_rate = 1e-5
-output_model_path = "resnet50_pseudo_rgb_unfrozen.h5"
+output_model_path = "resnet50_fft_unfrozen_from_start2.h5"
 
 # ==== DATA GENERATORS ====
 train_datagen = ImageDataGenerator(
