@@ -2,18 +2,18 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import confusion_matrix, classification_report
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
-from sklearn.metrics import confusion_matrix, classification_report
 
 # ==== CONFIG ====
+model_path = r"resnet50_fft_unfrozen_from_start.h5"  # <-- change to your saved model
 val_dir = r"C:\Users\rafai\Desktop\Programs\Python\Ptyxiaki\πτυχιακή\Rafail_dataset\ntu\split_dataset\val"
-model_path = "resnet50_fft_unfrozen_from_start.h5"
 image_size = (224, 224)
 batch_size = 16
 
 # ==== LOAD MODEL ====
-print("Loading model...")
+print(f"Loading model from {model_path} ...")
 model = load_model(model_path)
 
 # ==== DATA GENERATOR ====
@@ -26,34 +26,24 @@ val_generator = datagen.flow_from_directory(
     shuffle=False
 )
 
-# ==== PREDICT ====
+# ==== PREDICTIONS ====
 print("Predicting on validation set...")
 predictions = model.predict(val_generator, verbose=1)
 y_pred = np.argmax(predictions, axis=1)
 y_true = val_generator.classes
 class_labels = list(val_generator.class_indices.keys())
 
-# ==== CONFUSION MATRIX ====
-cm = confusion_matrix(y_true, y_pred)
+# ==== CLASSIFICATION REPORT ====
+print("\nClassification Report:")
 report = classification_report(y_true, y_pred, target_names=class_labels)
 print(report)
 
-# ==== PLOT CONFUSION MATRIX ====
-plt.figure(figsize=(20, 20))
-sns.heatmap(cm, annot=False, fmt='g', cmap='Blues', 
-            xticklabels=class_labels, yticklabels=class_labels)
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.title('Confusion Matrix - Validation Set')
-plt.tight_layout()
-plt.show()
+# ==== CONFUSION MATRIX ====
+cm = confusion_matrix(y_true, y_pred)
 
-
-# Flatten confusion matrix, ignoring diagonal
+# ---- Top 5 Confusions ----
 cm_copy = cm.copy()
 np.fill_diagonal(cm_copy, 0)
-
-# Get top 5 highest confusions
 top_confusions = []
 for _ in range(5):
     i, j = np.unravel_index(np.argmax(cm_copy), cm_copy.shape)
@@ -61,6 +51,17 @@ for _ in range(5):
     cm_copy[i, j] = 0
 
 print("\nTop 5 most confused class pairs:")
-for true_class, predicted_class, count in top_confusions:
-    print(f"True: {true_class} → Predicted: {predicted_class} ({count} samples)")
+for true_class, pred_class, count in top_confusions:
+    print(f"True: {true_class} → Predicted: {pred_class} ({count} samples)")
 
+# ---- Plot Normalized Confusion Matrix ----
+cm_norm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+plt.figure(figsize=(20, 20))
+sns.heatmap(cm_norm, annot=False, cmap='Blues',
+            xticklabels=class_labels, yticklabels=class_labels)
+plt.title('Normalized Confusion Matrix - Validation Set')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.tight_layout()
+plt.savefig("confusion_matrix_normalized.png")
+print("\nConfusion matrix saved to confusion_matrix_normalized.png")
