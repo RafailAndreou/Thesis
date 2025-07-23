@@ -11,7 +11,7 @@ This repository contains a collection of small utilities used during my thesis w
 - `visualization/` – utilities for plotting skeleton sequences or generated datasets.
 - `create_labels/` and other root‑level scripts – miscellaneous helpers (counting files, generating label CSVs, etc.).
 
-Most scripts contain hard coded file paths that were specific to the original experiments. Before running them, adjust the paths to match your own dataset locations.
+All scripts contain hard coded file paths that were specific to the original experiments. Before running them, adjust the paths to match your own dataset locations.
 
 ## Dependencies
 
