@@ -58,7 +58,7 @@ class STGCN(nn.Module):
     def __init__(self, num_class=60, num_point=25):
         super().__init__()
         # simple adjacency (identity)
-        self.A = torch.eye(num_point)
+        self.A = torch.eye(num_point).cuda()
         self.block1 = STGCNBlock(3, 64, self.A)
         self.block2 = STGCNBlock(64, 128, self.A, stride=2)
         self.pool = nn.AdaptiveAvgPool2d((1,1))
