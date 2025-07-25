@@ -37,6 +37,3 @@ pip install tensorflow opencv-python mediapipe numpy scipy matplotlib
 
 The individual scripts show example settings for the NTU and PKU datasets. Adapt them as needed for your own experiments.
 
-## License
-
-This repository is released for academic and research use only. It makes use of several open‑source libraries (see subdirectory READMEs for details).
