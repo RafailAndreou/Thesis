@@ -30,18 +30,26 @@ class NTUDataset(Dataset):
 class STGCNBlock(nn.Module):
     def __init__(self, in_channels, out_channels, A, stride=1):
         super().__init__()
-        self.gcn = nn.Conv2d(in_channels, out_channels, kernel_size=(1, A.shape[0]))
+        self.A = A
+        self.theta = nn.Conv2d(in_channels, out_channels, kernel_size=1)
         self.relu = nn.ReLU()
-        self.tcn = nn.Conv2d(out_channels, out_channels, kernel_size=(9, 1), stride=(stride,1), padding=(4,0))
+        self.tcn = nn.Conv2d(out_channels, out_channels, kernel_size=(9, 1), 
+                             stride=(stride, 1), padding=(4, 0))
         self.bn = nn.BatchNorm2d(out_channels)
 
     def forward(self, x, A):
         # x: (N, C, T, V)
-        # Apply Graph Conv (simple version: treat joints as channels)
-        x = self.gcn(x)
+        # Graph convolution: multiply adjacency (VxV)
+        N, C, T, V = x.size()
+        x = x.permute(0, 3, 1, 2).contiguous()  # (N, V, C, T)
+        x = torch.einsum('vu,nuct->nvct', A, x)  # apply adjacency
+        x = x.permute(0, 2, 3, 1).contiguous()   # back to (N, C, T, V)
+
+        x = self.theta(x)
         x = self.relu(x)
         x = self.tcn(x)
         return self.bn(x)
+
 
 # ====================
 # Simple ST-GCN Model
